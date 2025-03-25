@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Example stored procedure changeSet -->
+    <changeSet id="add-stored-procedure" author="your-name">
+        <!-- Disable statement splitting & strip comments to help avoid semicolon issues -->
+        <sql splitStatements="false" stripComments="true">
+            <![CDATA[
+                CREATE OR REPLACE FUNCTION sample_stored_proc()
+                RETURNS void AS $$
+                BEGIN
+                    RAISE NOTICE 'Hello from the stored procedure!';
+                END;
+                $$ LANGUAGE plpgsql;
+            ]]>
+        </sql>
+    </changeSet>
+
+    <!-- Add more changeSets here as needed -->
+
+</databaseChangeLog>

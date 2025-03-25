@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Example of creating standalone sequences without referencing a schema -->
+    <changeSet id="create-sequence-standards" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <!-- Removed schemaName attribute -->
+                <sequenceExists sequenceName="seq_standards"/>
+            </not>
+        </preConditions>
+
+        <createSequence
+            sequenceName="seq_standards"
+            startValue="1"
+            incrementBy="1"
+            minValue="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="seq_standards"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create-sequence-controls" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <!-- Removed schemaName attribute -->
+                <sequenceExists sequenceName="seq_controls"/>
+            </not>
+        </preConditions>
+
+        <createSequence
+            sequenceName="seq_controls"
+            startValue="1"
+            incrementBy="1"
+            minValue="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="seq_controls"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add more sequences here if necessary -->
+
+</databaseChangeLog>

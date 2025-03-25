@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-organizations-table" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="organizations"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="organizations">
+            <column name="organization_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             primaryKeyName="pk_organizations"/>
+            </column>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="industry" type="VARCHAR(50)"/>
+            <column name="region" type="VARCHAR(50)"/>
+            <column name="compliance_score" type="DECIMAL(5,2)"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="organizations"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

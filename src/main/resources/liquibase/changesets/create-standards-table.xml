@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-standards-table" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="standards"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="standards">
+            <column name="standard_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             primaryKeyName="pk_standards"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="description" type="TEXT"/>
+            <column name="url" type="VARCHAR(255)"/>
+            <column name="publisher" type="VARCHAR(50)"/>
+            <column name="focus_area" type="VARCHAR(50)"/>
+            <column name="release_date" type="DATE"/>
+            <column name="standard_version" type="VARCHAR(20)"/>
+            <column name="region" type="VARCHAR(50)"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="standards"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

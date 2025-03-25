@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-control-relevant-standards-table" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="control_relevant_standards"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="control_relevant_standards">
+            <column name="control_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_crs_ctrl"
+                             references="control_requirements(control_id)"/>
+            </column>
+            <column name="standard_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_crs_std"
+                             references="standards(standard_id)"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey
+            tableName="control_relevant_standards"
+            columnNames="control_id,standard_id"
+            constraintName="pk_ctrl_relevant_standards"/>
+
+        <rollback>
+            <dropTable tableName="control_relevant_standards"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

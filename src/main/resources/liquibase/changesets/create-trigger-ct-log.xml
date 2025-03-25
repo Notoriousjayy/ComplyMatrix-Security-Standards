@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-trigger-ct-log" author="admin">
+        <!-- 1) Define the function without referencing a specific schema -->
+        <sql splitStatements="false" stripComments="true">
+            <![CDATA[
+            CREATE OR REPLACE FUNCTION fn_log_compliance_tracking_changes()
+            RETURNS TRIGGER
+            LANGUAGE plpgsql
+            AS $$
+            BEGIN
+                IF TG_OP = 'UPDATE' THEN
+                    INSERT INTO compliance_tracking_audit (
+                        tracking_id, old_status, new_status, changed_on
+                    ) VALUES (
+                        OLD.tracking_id, OLD.compliance_status, NEW.compliance_status, NOW()
+                    );
+                END IF;
+
+                -- Return NEW to allow the update to proceed
+                RETURN NEW;
+            END;
+            $$;
+            ]]>
+        </sql>
+
+        <!-- 2) Drop the old trigger if it exists -->
+        <sql>
+            DROP TRIGGER IF EXISTS tr_ct_audit ON compliance_tracking;
+        </sql>
+
+        <!-- 3) Create a new trigger referencing the function -->
+        <sql>
+            CREATE TRIGGER tr_ct_audit
+            AFTER UPDATE
+            ON compliance_tracking
+            FOR EACH ROW
+            EXECUTE PROCEDURE fn_log_compliance_tracking_changes();
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TRIGGER IF EXISTS tr_ct_audit ON compliance_tracking;
+                DROP FUNCTION IF EXISTS fn_log_compliance_tracking_changes();
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create-ct-audit-table" author="admin">
+        <createTable tableName="compliance_tracking_audit">
+            <column name="audit_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_compliance_tracking_audit"/>
+            </column>
+            <column name="tracking_id" type="BIGINT"/>
+            <column name="old_status" type="VARCHAR(20)"/>
+            <column name="new_status" type="VARCHAR(20)"/>
+            <column name="changed_on" type="TIMESTAMP"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="compliance_tracking_audit"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

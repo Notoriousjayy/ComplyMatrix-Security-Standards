@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-compliance-mappings-table" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="compliance_mappings"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="compliance_mappings">
+            <column name="mapping_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             primaryKeyName="pk_compliance_mappings"/>
+            </column>
+            <column name="source_standard_id" type="BIGINT">
+                <constraints foreignKeyName="fk_cm_src_std"
+                             references="standards(standard_id)"/>
+            </column>
+            <column name="source_control_id" type="BIGINT">
+                <constraints foreignKeyName="fk_cm_src_ctrl"
+                             references="control_requirements(control_id)"/>
+            </column>
+            <column name="target_standard_id" type="BIGINT">
+                <constraints foreignKeyName="fk_cm_tgt_std"
+                             references="standards(standard_id)"/>
+            </column>
+            <column name="target_control_id" type="BIGINT">
+                <constraints foreignKeyName="fk_cm_tgt_ctrl"
+                             references="control_requirements(control_id)"/>
+            </column>
+            <column name="mapping_description" type="TEXT"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="compliance_mappings"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

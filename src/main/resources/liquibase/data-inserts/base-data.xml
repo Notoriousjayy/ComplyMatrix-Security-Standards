@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- ==================================================
+         1) Insert base Standards data
+         (runs in all contexts except 'test')
+        ================================================== -->
+
+
+
+
+    <changeSet id="base-standards-data" author="admin" context="!test">
+        <insert tableName="standards">
+            <column name="standard_id" valueNumeric="1"/>
+            <column name="name" value="ISO 27001"/>
+            <column name="category" value="Information Security"/>
+            <column name="description" value="International standard for information security management."/>
+            <column name="url" value="https://www.iso.org/isoiec-27001-information-security.html"/>
+            <column name="publisher" value="ISO"/>
+            <column name="focus_area" value="Security Controls"/>
+            <column name="release_date" valueDate="2013-10-01"/>
+            <column name="standard_version" value="2013"/>
+            <column name="region" value="Global"/>
+        </insert>
+
+        <insert tableName="standards">
+            <column name="standard_id" valueNumeric="2"/>
+            <column name="name" value="NIST CSF"/>
+            <column name="category" value="Cybersecurity"/>
+            <column name="description" value="Framework for improving critical infrastructure cybersecurity."/>
+            <column name="url" value="https://www.nist.gov/cyberframework"/>
+            <column name="publisher" value="NIST"/>
+            <column name="focus_area" value="Cybersecurity"/>
+            <column name="release_date" valueDate="2018-04-16"/>
+            <column name="standard_version" value="1.1"/>
+            <column name="region" value="US"/>
+        </insert>
+
+        <insert tableName="standards">
+            <column name="standard_id" valueNumeric="3"/>
+            <column name="name" value="PCI-DSS"/>
+            <column name="category" value="Payment Security"/>
+            <column name="description" value="Payment Card Industry Data Security Standard."/>
+            <column name="url" value="https://www.pcisecuritystandards.org/"/>
+            <column name="publisher" value="PCI SSC"/>
+            <column name="focus_area" value="Credit Card Security"/>
+            <column name="release_date" valueDate="2016-04-01"/>
+            <column name="standard_version" value="3.2"/>
+            <column name="region" value="Global"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="standards">
+                <where>standard_id IN (1, 2, 3)</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <!-- Reset the 'standards_standard_id_seq' sequence to avoid PK collisions -->
+    <changeSet id="reset-standards-sequence" author="admin" context="!test">
+        <sql>
+            -- Move the sequence to 1 + the current MAX(standard_id)
+            SELECT setval('standards_standard_id_seq', 
+                          (SELECT COALESCE(MAX(standard_id), 0) FROM standards) + 1, 
+                          false
+                         );
+        </sql>
+    </changeSet>
+
+
+    <!-- ==================================================
+         2) Insert base Organizations data
+    ================================================== -->
+    <changeSet id="base-organizations-data" author="admin" context="!test">
+        <insert tableName="organizations">
+            <column name="organization_id" valueNumeric="1"/>
+            <column name="name" value="Acme Corp"/>
+            <column name="industry" value="Technology"/>
+            <column name="region" value="NA"/>
+            <column name="compliance_score" valueNumeric="0.00"/>
+        </insert>
+
+        <insert tableName="organizations">
+            <column name="organization_id" valueNumeric="2"/>
+            <column name="name" value="Globex Inc"/>
+            <column name="industry" value="Finance"/>
+            <column name="region" value="EMEA"/>
+            <column name="compliance_score" valueNumeric="0.00"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="organizations">
+                <where>organization_id IN (1, 2)</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <!-- Reset the 'organizations_organization_id_seq' sequence to avoid PK collisions -->
+    <changeSet id="reset-organizations-sequence" author="admin" context="!test">
+        <sql>
+            SELECT setval('organizations_organization_id_seq', 
+                          (SELECT COALESCE(MAX(organization_id), 0) FROM organizations) + 1, 
+                          false
+                         );
+        </sql>
+    </changeSet>
+
+
+    <!-- ==================================================
+         3) Insert some base Control Requirements
+    ================================================== -->
+    <changeSet id="base-control-req-data" author="admin" context="!test">
+        <!-- control_id 1 references standard_id=1 (ISO 27001) -->
+        <insert tableName="control_requirements">
+            <column name="control_id" valueNumeric="1"/>
+            <column name="standard_id" valueNumeric="1"/>
+            <column name="name" value="Access Control Policy"/>
+            <column name="description" value="Define and document an access control policy to enforce authorized access."/>
+            <column name="category" value="Access Control"/>
+            <column name="is_mandatory" valueBoolean="true"/>
+            <column name="risk_level" value="High"/>
+            <column name="compliance_type" value="Policy"/>
+            <column name="applicable_industry" value="All"/>
+        </insert>
+
+        <!-- control_id 2 references standard_id=2 (NIST CSF) -->
+        <insert tableName="control_requirements">
+            <column name="control_id" valueNumeric="2"/>
+            <column name="standard_id" valueNumeric="2"/>
+            <column name="name" value="Incident Response Plan"/>
+            <column name="description" value="Develop and implement an incident response plan for cybersecurity events."/>
+            <column name="category" value="Incident Management"/>
+            <column name="is_mandatory" valueBoolean="true"/>
+            <column name="risk_level" value="Medium"/>
+            <column name="compliance_type" value="Process"/>
+            <column name="applicable_industry" value="All"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="control_requirements">
+                <where>control_id IN (1, 2)</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <!-- Reset the 'control_requirements_control_id_seq' sequence to avoid PK collisions -->
+    <changeSet id="reset-control-req-sequence" author="admin" context="!test">
+        <sql>
+            SELECT setval('control_requirements_control_id_seq', 
+                          (SELECT COALESCE(MAX(control_id), 0) FROM control_requirements) + 1, 
+                          false
+                         );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

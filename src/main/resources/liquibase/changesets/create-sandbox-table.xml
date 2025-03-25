@@ -1,0 +1,15 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+    
+    <changeSet id="create-sandbox-dev-table" author="you" context="dev">
+        <createTable tableName="sandbox_dev_table">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="test_column" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

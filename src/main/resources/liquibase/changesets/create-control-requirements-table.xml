@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-control-requirements-table" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="control_requirements"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="control_requirements">
+            <column name="control_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             primaryKeyName="pk_control_requirements"/>
+            </column>
+            <column name="standard_id" type="BIGINT">
+                <!-- references standards(standard_id) -->
+                <constraints nullable="false"
+                             foreignKeyName="fk_cr_standard"
+                             references="standards(standard_id)"/>
+            </column>
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="description" type="TEXT"/>
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="is_mandatory" type="BOOLEAN"/>
+            <column name="risk_level" type="VARCHAR(10)"/>
+            <column name="compliance_type" type="VARCHAR(20)"/>
+            <column name="applicable_industry" type="VARCHAR(50)"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="control_requirements"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

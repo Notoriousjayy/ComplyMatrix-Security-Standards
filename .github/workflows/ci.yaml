@@ -1,0 +1,90 @@
+name: CI Pipeline
+
+on:
+  # Trigger this workflow on pushes to 'main' and 'dev' branches,
+  # and on pull requests targeting those branches.
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
+
+jobs:
+  build-and-test:
+    # Use the latest Ubuntu runner
+    runs-on: ubuntu-latest
+
+    # Optional: concurrency settings so only one workflow runs per branch at a time
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      # 1) Check out the repository code
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # 2) Set up JDK (Temurin is the official Adoptium distribution)
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          # Adjust the Java version to match your project's requirements
+
+      # 3) Cache Maven dependencies to speed up subsequent builds
+      - name: Cache Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      # 4) Install dependencies (optional but can be useful to ensure everything is downloaded)
+      - name: Resolve Maven dependencies
+        run: mvn dependency:resolve
+
+      # 5) (Optional) Run a Liquibase status check
+      #    to see if any changesets would be applied.
+      #    This step is commented out by default. Uncomment if you want to verify Liquibase
+      #    state as part of CI.
+      #
+      # - name: Check Liquibase status
+      #   run: mvn liquibase:status
+
+      # 6) Build, run tests (including Testcontainers-based integration tests).
+      #    'mvn verify' will compile, run tests, and perform any checks configured in the build lifecycle.
+      - name: Build & Test
+        run: mvn verify
+
+      # 7) (Optional) Generate and view coverage if you have configured Jacoco or another coverage tool
+      #    For example:
+      #
+      # - name: Generate code coverage report
+      #   run: mvn jacoco:report
+
+      # 8) Package the application (skip tests here to avoid re-running them)
+      - name: Package application
+        run: mvn package -DskipTests
+
+      # 9) (Optional) Upload the JAR/WAR as an artifact
+      #    This can help retrieve the build output from the workflow summary page
+      #
+      # - name: Upload build artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: app-jar
+      #     path: target/*.jar
+
+      # 10) (Optional) Deploy or push the image to Docker registry, etc.
+      #     For example, if you want to build a Docker image and push it:
+      #
+      # - name: Build Docker image
+      #   run: docker build -t your-org/complymatrix-app .
+      #
+      # - name: Push Docker image
+      #   run: docker push your-org/complymatrix-app
+
+      # Additional steps can be added for:
+      # - Advanced Liquibase operations (rollback, diff)
+      # - Code quality checks (SpotBugs, PMD, Checkstyle)
+      # - Deployment to staging/production if using GitHub Actions for CD

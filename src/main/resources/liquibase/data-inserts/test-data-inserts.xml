@@ -1,0 +1,26 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Use context="dev" so these standards ONLY appear in dev (not test). -->
+    <changeSet id="insert-dev-standards" author="admin" context="dev">
+        <insert tableName="standards">
+            <column name="name" value="Test Standard"/>
+        </insert>
+        <insert tableName="standards">
+            <column name="name" value="PCI-DSS Test"/>
+        </insert>
+        <insert tableName="standards">
+            <column name="name" value="ISO 27001"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="standards">
+                <where>name IN ('Test Standard','PCI-DSS Test','ISO 27001')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

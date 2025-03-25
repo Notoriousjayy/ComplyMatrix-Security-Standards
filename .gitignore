@@ -1,0 +1,78 @@
+# -----------------------------------------------------------------
+# Maven / Java / Spring Boot
+# -----------------------------------------------------------------
+target/
+out/
+*.jar
+*.war
+*.ear
+*.iml
+
+# Logs and temp files
+*.log
+logs/
+*.pid
+*.seed
+hs_err_pid*
+
+# -----------------------------------------------------------------
+# IntelliJ IDEA
+# -----------------------------------------------------------------
+.idea/
+*.iws
+*.ipr
+*.iml
+# IntelliJ cache and misc
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/shelf
+.idea/**/dictionary
+.idea/**/.gitignore
+# Ignore IntelliJ project-specific settings like compiler.xml, vcs.xml, etc.
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea_modules/
+
+# -----------------------------------------------------------------
+# Eclipse
+# -----------------------------------------------------------------
+.project
+.classpath
+.csettings
+.settings/
+*.launch
+
+# -----------------------------------------------------------------
+# macOS
+# -----------------------------------------------------------------
+.DS_Store
+
+# -----------------------------------------------------------------
+# Windows
+# -----------------------------------------------------------------
+Thumbs.db
+
+# -----------------------------------------------------------------
+# Liquibase
+# -----------------------------------------------------------------
+# Typically, Liquibase-generated logs or temp files. Adjust as needed.
+liquibase.log
+
+# -----------------------------------------------------------------
+# Testcontainers
+# -----------------------------------------------------------------
+# No specific Testcontainers output to ignore by default, but if
+# you store local Docker volumes or config, list them here:
+# docker-data/
+# postgres_data/
+
+# -----------------------------------------------------------------
+# Misc
+# -----------------------------------------------------------------
+# If you use environment variables or credential files that should not be committed:
+.env
+*.env
+
+# -----------------------------------------------------------------
+# End of file
+# -----------------------------------------------------------------

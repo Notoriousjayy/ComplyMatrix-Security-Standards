@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="insert-test-organization" author="admin" context="test">
+        <insert tableName="organizations">
+            <column name="name" value="Test Organization"/>
+            <column name="industry" value="Demo Industry"/>
+            <column name="region" value="US"/>
+        </insert>
+        <rollback>
+            <delete tableName="organizations">
+                <where>organization_id = 1</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

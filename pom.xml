@@ -1,0 +1,261 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+           http://maven.apache.org/POM/4.0.0
+           http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 1) Inherit from Spring Boot's parent for version management -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <!-- Updated from 3.0.4 to 3.1.2 (optional, but recommended) -->
+        <version>3.1.2</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.example</groupId>
+    <artifactId>my-db-integration</artifactId>
+    <version>1.0.0</version>
+    <name>My DB Integration (Spring Boot + Liquibase + Testcontainers) [PostgreSQL]</name>
+
+    <properties>
+        <!-- Use Java 17 (adjust if you prefer another version) -->
+        <java.version>17</java.version>
+
+        <!-- SQL Maven Plugin version (for local DB scripts) -->
+        <maven.sql.plugin.version>1.5</maven.sql.plugin.version>
+
+        <!-- DB info (used by the SQL plugin in the local-db-setup profile) -->
+        <db.driver>org.postgresql.Driver</db.driver>
+        <db.url.admin>jdbc:postgresql://localhost:5432/postgres</db.url.admin>
+        <db.url.app>jdbc:postgresql://localhost:5432/security_standards_db</db.url.app>
+        <db.user>postgres</db.user>
+        <db.pass>postgres</db.pass>
+        
+        <!-- Enable Testcontainers reuse (optional) -->
+        <testcontainers.reuse.enable>true</testcontainers.reuse.enable>
+    </properties>
+
+    <!-- 
+      2) Manage versions of Testcontainers through its BOM. 
+         This ensures consistent versions for all Testcontainers artifacts.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.18.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Spring Boot Starter (core) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Starter JDBC (for JdbcTemplate, etc.) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Starter Data JPA (Hibernate + Spring Data) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- PostgreSQL Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.5</version>
+        </dependency>
+
+        <!-- Liquibase for schema migrations -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
+        <!-- Lombok for boilerplate-free Java code -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring Boot Starter Test (JUnit 5, Mockito, etc.) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Testcontainers: PostgreSQL module (for ephemeral DB in tests) -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Testcontainers: JUnit Jupiter integration -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Spring Boot Maven Plugin (packages your application, runs main class, etc.) -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Configure Surefire to run all tests in one JVM so that the same Testcontainers instance can be reused -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <parallel>none</parallel>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <systemPropertyVariables>
+                        <!-- Pass Testcontainers reuse property if you want to enable it -->
+                        <testcontainers.reuse.enable>${testcontainers.reuse.enable}</testcontainers.reuse.enable>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            
+            <!-- Optionally, if you have integration tests run by Failsafe, add its configuration too -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <systemPropertyVariables>
+                        <testcontainers.reuse.enable>${testcontainers.reuse.enable}</testcontainers.reuse.enable>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- SQL Maven Plugin configuration remains in a separate profile -->
+        </plugins>
+    </build>
+
+    <!-- OPTIONAL: Move SQL plugin tasks into a special profile named 'local-db-setup' -->
+    <profiles>
+        <profile>
+            <id>local-db-setup</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>sql-maven-plugin</artifactId>
+                        <version>${maven.sql.plugin.version}</version>
+                        <dependencies>
+                            <!-- Include PostgreSQL driver for the plugin -->
+                            <dependency>
+                                <groupId>org.postgresql</groupId>
+                                <artifactId>postgresql</artifactId>
+                                <version>42.7.5</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <!-- 1) db-drop-create: Drop & Create the DB (outside transaction) -->
+                            <execution>
+                                <id>db-drop-create</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <driver>${db.driver}</driver>
+                                    <url>${db.url.admin}</url>
+                                    <username>${db.user}</username>
+                                    <password>${db.pass}</password>
+                                    <srcFiles>
+                                        <srcFile>src/main/resources/sql/data-create-db.sql</srcFile>
+                                    </srcFiles>
+                                    <delimiter>;</delimiter>
+                                    <onError>ABORT</onError>
+                                    <autocommit>true</autocommit>
+                                    <enableBatch>false</enableBatch>
+                                    <executeEachLine>true</executeEachLine>
+                                </configuration>
+                            </execution>
+
+                            <!-- 2) db-schema: Create tables, constraints (transaction is fine) -->
+                            <execution>
+                                <id>db-schema</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <driver>${db.driver}</driver>
+                                    <url>${db.url.app}</url>
+                                    <username>${db.user}</username>
+                                    <password>${db.pass}</password>
+                                    <srcFiles>
+                                        <srcFile>src/main/resources/sql/data-definition.sql</srcFile>
+                                    </srcFiles>
+                                    <delimiter>;</delimiter>
+                                    <onError>ABORT</onError>
+                                    <autocommit>true</autocommit>
+                                    <enableBatch>true</enableBatch>
+                                    <executeEachLine>false</executeEachLine>
+                                </configuration>
+                            </execution>
+
+                            <!-- 3) db-insert: Insert baseline/test data -->
+                            <execution>
+                                <id>db-insert</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <driver>${db.driver}</driver>
+                                    <url>${db.url.app}</url>
+                                    <username>${db.user}</username>
+                                    <password>${db.pass}</password>
+                                    <srcFiles>
+                                        <srcFile>src/main/resources/sql/data-manipulation.sql</srcFile>
+                                    </srcFiles>
+                                    <delimiter>;</delimiter>
+                                    <onError>ABORT</onError>
+                                    <autocommit>true</autocommit>
+                                    <enableBatch>true</enableBatch>
+                                    <executeEachLine>false</executeEachLine>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

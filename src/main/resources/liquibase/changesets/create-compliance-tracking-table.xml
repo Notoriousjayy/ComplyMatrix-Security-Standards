@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-compliance-tracking-table" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="compliance_tracking"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="compliance_tracking">
+            <column name="tracking_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             primaryKeyName="pk_compliance_tracking"/>
+            </column>
+            <column name="organization_id" type="BIGINT">
+                <constraints foreignKeyName="fk_ct_org"
+                             references="organizations(organization_id)"/>
+            </column>
+            <column name="standard_id" type="BIGINT">
+                <constraints foreignKeyName="fk_ct_standard"
+                             references="standards(standard_id)"/>
+            </column>
+            <column name="control_id" type="BIGINT">
+                <constraints foreignKeyName="fk_ct_control"
+                             references="control_requirements(control_id)"/>
+            </column>
+            <column name="compliance_status" type="VARCHAR(20)"/>
+            <column name="audit_date" type="DATE"/>
+            <column name="evidence_url" type="VARCHAR(255)"/>
+            <column name="risk_impact" type="VARCHAR(10)"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="compliance_tracking"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

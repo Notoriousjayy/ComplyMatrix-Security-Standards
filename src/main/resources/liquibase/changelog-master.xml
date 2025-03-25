@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog 
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- 1) Core database creation -->
+
+    <!-- Create any sequences first -->
+    <include file="changesets/create-sequence-standards.xml" relativeToChangelogFile="true"/>
+
+    <!-- Create base tables -->
+    <include file="changesets/create-organizations-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/create-standards-table.xml" relativeToChangelogFile="true"/>
+
+    <!-- Create tables that depend on the base tables -->
+    <include file="changesets/create-control-requirements-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/create-compliance-tracking-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/create-training-resources-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/create-compliance-mappings-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/create-organization-standards.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/create-control-relevant-standards.xml" relativeToChangelogFile="true"/>
+
+    <!-- Create additional objects -->
+    <include file="changesets/create-view-compliance_summary.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/add-stored-procedure.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/create-trigger-ct-log.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/create-sandbox-table.xml" relativeToChangelogFile="true"/>
+
+    <!-- 2) Insert test organizations first -->
+    <include file="data-inserts/test-organizations.xml" relativeToChangelogFile="true"/>
+
+    <!-- 3) Insert optional base or test data -->
+    <include file="data-inserts/test-data-inserts.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

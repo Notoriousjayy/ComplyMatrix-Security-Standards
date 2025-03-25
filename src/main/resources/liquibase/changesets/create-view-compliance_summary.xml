@@ -1,0 +1,39 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-view-compliance_summary" author="admin">
+        <!-- Drop existing view if you're recreating it -->
+        <sql>
+            DROP VIEW IF EXISTS compliance_summary;
+        </sql>
+
+        <createView
+            viewName="compliance_summary"
+            replaceIfExists="true">
+            <![CDATA[
+                SELECT 
+                    o.name AS organization_name,
+                    s.name AS standard_name,
+                    cr.name AS control_name,
+                    ct.compliance_status,
+                    ct.audit_date,
+                    ct.risk_impact
+                FROM compliance_tracking ct
+                JOIN organizations o 
+                    ON ct.organization_id = o.organization_id
+                JOIN standards s
+                    ON ct.standard_id = s.standard_id
+                JOIN control_requirements cr
+                    ON ct.control_id = cr.control_id
+            ]]>
+        </createView>
+
+        <rollback>
+            <dropView viewName="compliance_summary"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

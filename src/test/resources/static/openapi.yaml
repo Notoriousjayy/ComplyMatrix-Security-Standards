@@ -1,0 +1,1388 @@
+openapi: 3.0.3
+info:
+  title: Security Standards Compliance API
+  description: >
+    An API for managing security standards, control requirements, compliance
+    mappings, organizations, training resources, and compliance tracking.
+  version: "1.0.0"
+
+servers:
+  - url: https://api.example.com
+    description: Production server
+  - url: https://sandbox-api.example.com
+    description: Sandbox server
+
+paths:
+  # ---------------------------------------------------------------------------
+  # 1) Standards
+  # ---------------------------------------------------------------------------
+  /api/v1/standards:
+    get:
+      summary: List all standards
+      operationId: listStandards
+      tags:
+        - Standards
+      responses:
+        "200":
+          $ref: "#/components/responses/StandardListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+      description: Retrieves a list of all standards.
+    post:
+      summary: Create a new standard
+      operationId: createStandard
+      tags:
+        - Standards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StandardCreate"
+      responses:
+        "201":
+          $ref: "#/components/responses/StandardResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /api/v1/standards/{standardId}:
+    get:
+      summary: Get a single standard
+      operationId: getStandard
+      tags:
+        - Standards
+      parameters:
+        - name: standardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/StandardResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Update an existing standard (full)
+      operationId: updateStandard
+      tags:
+        - Standards
+      parameters:
+        - name: standardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StandardUpdate"
+      responses:
+        "200":
+          $ref: "#/components/responses/StandardResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update an existing standard (partial)
+      operationId: patchStandard
+      tags:
+        - Standards
+      parameters:
+        - name: standardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StandardPatch"
+      responses:
+        "200":
+          $ref: "#/components/responses/StandardResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Delete a standard
+      operationId: deleteStandard
+      tags:
+        - Standards
+      parameters:
+        - name: standardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Standard deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ---------------------------------------------------------------------------
+  # 2) Control Requirements
+  # ---------------------------------------------------------------------------
+  /api/v1/control-requirements:
+    get:
+      summary: List all control requirements
+      operationId: listControlRequirements
+      tags:
+        - Control Requirements
+      responses:
+        "200":
+          description: A list of control requirements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ControlRequirement"
+    post:
+      summary: Create a new control requirement
+      operationId: createControlRequirement
+      tags:
+        - Control Requirements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlRequirementCreate"
+      responses:
+        "201":
+          description: Newly created control requirement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlRequirement"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /api/v1/control-requirements/{controlId}:
+    get:
+      summary: Get a single control requirement
+      operationId: getControlRequirement
+      tags:
+        - Control Requirements
+      parameters:
+        - name: controlId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Requested control requirement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlRequirement"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Update an existing control requirement (full)
+      operationId: updateControlRequirement
+      tags:
+        - Control Requirements
+      parameters:
+        - name: controlId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlRequirementUpdate"
+      responses:
+        "200":
+          description: Updated control requirement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlRequirement"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update an existing control requirement (partial)
+      operationId: patchControlRequirement
+      tags:
+        - Control Requirements
+      parameters:
+        - name: controlId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlRequirementPatch"
+      responses:
+        "200":
+          description: Updated control requirement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlRequirement"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Delete a control requirement
+      operationId: deleteControlRequirement
+      tags:
+        - Control Requirements
+      parameters:
+        - name: controlId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Control requirement deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ---------------------------------------------------------------------------
+  # 3) Compliance Mappings
+  # ---------------------------------------------------------------------------
+  /api/v1/compliance-mappings:
+    get:
+      summary: List all compliance mappings
+      operationId: listComplianceMappings
+      tags:
+        - Compliance Mappings
+      responses:
+        "200":
+          description: A list of compliance mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ComplianceMapping"
+    post:
+      summary: Create a new compliance mapping
+      operationId: createComplianceMapping
+      tags:
+        - Compliance Mappings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceMappingCreate"
+      responses:
+        "201":
+          description: Newly created compliance mapping
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceMapping"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /api/v1/compliance-mappings/{mappingId}:
+    get:
+      summary: Get a single compliance mapping
+      operationId: getComplianceMapping
+      tags:
+        - Compliance Mappings
+      parameters:
+        - name: mappingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Requested compliance mapping
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceMapping"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Update an existing compliance mapping (full)
+      operationId: updateComplianceMapping
+      tags:
+        - Compliance Mappings
+      parameters:
+        - name: mappingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceMappingUpdate"
+      responses:
+        "200":
+          description: Updated compliance mapping
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceMapping"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update an existing compliance mapping (partial)
+      operationId: patchComplianceMapping
+      tags:
+        - Compliance Mappings
+      parameters:
+        - name: mappingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceMappingPatch"
+      responses:
+        "200":
+          description: Updated compliance mapping
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceMapping"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Delete a compliance mapping
+      operationId: deleteComplianceMapping
+      tags:
+        - Compliance Mappings
+      parameters:
+        - name: mappingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Compliance mapping deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ---------------------------------------------------------------------------
+  # 4) Organizations
+  # ---------------------------------------------------------------------------
+  /api/v1/organizations:
+    get:
+      summary: List all organizations
+      operationId: listOrganizations
+      tags:
+        - Organizations
+      responses:
+        "200":
+          description: A list of organizations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Organization"
+    post:
+      summary: Create a new organization
+      operationId: createOrganization
+      tags:
+        - Organizations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationCreate"
+      responses:
+        "201":
+          description: Newly created organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /api/v1/organizations/{organizationId}:
+    get:
+      summary: Get a single organization
+      operationId: getOrganization
+      tags:
+        - Organizations
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Requested organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Update an existing organization (full)
+      operationId: updateOrganization
+      tags:
+        - Organizations
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationUpdate"
+      responses:
+        "200":
+          description: Updated organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update an existing organization (partial)
+      operationId: patchOrganization
+      tags:
+        - Organizations
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationPatch"
+      responses:
+        "200":
+          description: Updated organization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Delete an organization
+      operationId: deleteOrganization
+      tags:
+        - Organizations
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Organization deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ---------------------------------------------------------------------------
+  # 5) Organization Standards (Many-to-Many bridging)
+  # ---------------------------------------------------------------------------
+  /api/v1/organization-standards:
+    get:
+      summary: List all organization-standard links
+      operationId: listOrganizationStandards
+      tags:
+        - Organization Standards
+      responses:
+        "200":
+          description: A list of organization-standard links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrganizationStandard"
+    post:
+      summary: Link an organization to a standard
+      operationId: createOrganizationStandard
+      tags:
+        - Organization Standards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationStandardCreate"
+      responses:
+        "201":
+          description: Newly created organization-standard link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationStandard"
+
+  /api/v1/organization-standards/{organizationId}/{standardId}:
+    get:
+      summary: Get a specific organization-standard link
+      operationId: getOrganizationStandard
+      tags:
+        - Organization Standards
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: standardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Requested organization-standard link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationStandard"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Unlink an organization from a standard
+      operationId: deleteOrganizationStandard
+      tags:
+        - Organization Standards
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: standardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Link deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ---------------------------------------------------------------------------
+  # 6) Control Relevant Standards (Many-to-Many bridging)
+  # ---------------------------------------------------------------------------
+  /api/v1/control-relevant-standards:
+    get:
+      summary: List all control-standard links
+      operationId: listControlRelevantStandards
+      tags:
+        - Control Relevant Standards
+      responses:
+        "200":
+          description: A list of control-standard links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ControlRelevantStandard"
+    post:
+      summary: Link a control to a standard
+      operationId: createControlRelevantStandard
+      tags:
+        - Control Relevant Standards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlRelevantStandardCreate"
+      responses:
+        "201":
+          description: Newly created control-standard link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlRelevantStandard"
+
+  /api/v1/control-relevant-standards/{controlId}/{standardId}:
+    get:
+      summary: Get a specific control-standard link
+      operationId: getControlRelevantStandard
+      tags:
+        - Control Relevant Standards
+      parameters:
+        - name: controlId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: standardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Requested control-standard link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlRelevantStandard"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Unlink a control from a standard
+      operationId: deleteControlRelevantStandard
+      tags:
+        - Control Relevant Standards
+      parameters:
+        - name: controlId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: standardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Link deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ---------------------------------------------------------------------------
+  # 7) Compliance Tracking
+  # ---------------------------------------------------------------------------
+  /api/v1/compliance-tracking:
+    get:
+      summary: List all compliance tracking records
+      operationId: listComplianceTracking
+      tags:
+        - Compliance Tracking
+      responses:
+        "200":
+          description: A list of compliance tracking records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ComplianceTracking"
+    post:
+      summary: Create a new compliance tracking record
+      operationId: createComplianceTracking
+      tags:
+        - Compliance Tracking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceTrackingCreate"
+      responses:
+        "201":
+          description: Newly created compliance tracking record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceTracking"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /api/v1/compliance-tracking/{trackingId}:
+    get:
+      summary: Get a single compliance tracking record
+      operationId: getComplianceTracking
+      tags:
+        - Compliance Tracking
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Requested compliance tracking record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceTracking"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Update an existing compliance tracking record (full)
+      operationId: updateComplianceTracking
+      tags:
+        - Compliance Tracking
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceTrackingUpdate"
+      responses:
+        "200":
+          description: Updated compliance tracking record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceTracking"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update an existing compliance tracking record (partial)
+      operationId: patchComplianceTracking
+      tags:
+        - Compliance Tracking
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceTrackingPatch"
+      responses:
+        "200":
+          description: Updated compliance tracking record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceTracking"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Delete a compliance tracking record
+      operationId: deleteComplianceTracking
+      tags:
+        - Compliance Tracking
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Compliance tracking record deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ---------------------------------------------------------------------------
+  # 8) Training Resources
+  # ---------------------------------------------------------------------------
+  /api/v1/training-resources:
+    get:
+      summary: List all training resources
+      operationId: listTrainingResources
+      tags:
+        - Training Resources
+      responses:
+        "200":
+          description: A list of training resources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrainingResource"
+    post:
+      summary: Create a new training resource
+      operationId: createTrainingResource
+      tags:
+        - Training Resources
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrainingResourceCreate"
+      responses:
+        "201":
+          description: Newly created training resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingResource"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /api/v1/training-resources/{resourceId}:
+    get:
+      summary: Get a single training resource
+      operationId: getTrainingResource
+      tags:
+        - Training Resources
+      parameters:
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Requested training resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingResource"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Update an existing training resource (full)
+      operationId: updateTrainingResource
+      tags:
+        - Training Resources
+      parameters:
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrainingResourceUpdate"
+      responses:
+        "200":
+          description: Updated training resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingResource"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update an existing training resource (partial)
+      operationId: patchTrainingResource
+      tags:
+        - Training Resources
+      parameters:
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrainingResourcePatch"
+      responses:
+        "200":
+          description: Updated training resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingResource"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Delete a training resource
+      operationId: deleteTrainingResource
+      tags:
+        - Training Resources
+      parameters:
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Training resource deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  schemas:
+    # -------------------------------------------------------------------------
+    # Domain Schemas
+    # -------------------------------------------------------------------------
+    Standard:
+      type: object
+      properties:
+        standardId:
+          type: integer
+          example: 101
+        name:
+          type: string
+          example: "ISO 27001"
+        category:
+          type: string
+          example: "Information Security"
+        description:
+          type: string
+          example: "International standard for ISMS"
+        url:
+          type: string
+          example: "https://www.iso.org/isoiec-27001-information-security.html"
+        publisher:
+          type: string
+          example: "ISO"
+        focusArea:
+          type: string
+          example: "Enterprise Security"
+        releaseDate:
+          type: string
+          format: date
+          example: "2013-10-01"
+        standardVersion:
+          type: string
+          example: "2013"
+        region:
+          type: string
+          example: "Global"
+    StandardCreate:
+      allOf:
+        - $ref: "#/components/schemas/Standard"
+        - type: object
+          properties:
+            standardId:
+              type: integer
+              readOnly: true
+          required:
+            - name
+    StandardUpdate:
+      allOf:
+        - $ref: "#/components/schemas/StandardCreate"
+    StandardPatch:
+      type: object
+      description: Partial update schema for Standard
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        publisher:
+          type: string
+        focusArea:
+          type: string
+        releaseDate:
+          type: string
+          format: date
+        standardVersion:
+          type: string
+        region:
+          type: string
+
+    ControlRequirement:
+      type: object
+      properties:
+        controlId:
+          type: integer
+          example: 201
+        standardId:
+          type: integer
+          example: 101
+        name:
+          type: string
+          example: "Access Control Policy"
+        description:
+          type: string
+          example: "Defines policy around user access management"
+        category:
+          type: string
+          example: "Access Management"
+        isMandatory:
+          type: boolean
+          example: true
+        riskLevel:
+          type: string
+          example: "High"
+        complianceType:
+          type: string
+          example: "Technical"
+        applicableIndustry:
+          type: string
+          example: "Finance"
+    ControlRequirementCreate:
+      allOf:
+        - $ref: "#/components/schemas/ControlRequirement"
+        - type: object
+          properties:
+            controlId:
+              readOnly: true
+          required:
+            - standardId
+            - name
+    ControlRequirementUpdate:
+      allOf:
+        - $ref: "#/components/schemas/ControlRequirementCreate"
+    ControlRequirementPatch:
+      type: object
+      properties:
+        standardId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        isMandatory:
+          type: boolean
+        riskLevel:
+          type: string
+        complianceType:
+          type: string
+        applicableIndustry:
+          type: string
+
+    ComplianceMapping:
+      type: object
+      properties:
+        mappingId:
+          type: integer
+          example: 301
+        sourceStandardId:
+          type: integer
+          example: 101
+        sourceControlId:
+          type: integer
+          example: 201
+        targetStandardId:
+          type: integer
+          example: 102
+        targetControlId:
+          type: integer
+          example: 202
+        mappingDescription:
+          type: string
+          example: "This control is equivalent to..."
+    ComplianceMappingCreate:
+      allOf:
+        - $ref: "#/components/schemas/ComplianceMapping"
+        - type: object
+          properties:
+            mappingId:
+              readOnly: true
+          required:
+            - sourceStandardId
+            - sourceControlId
+            - targetStandardId
+            - targetControlId
+    ComplianceMappingUpdate:
+      allOf:
+        - $ref: "#/components/schemas/ComplianceMappingCreate"
+    ComplianceMappingPatch:
+      type: object
+      properties:
+        sourceStandardId:
+          type: integer
+        sourceControlId:
+          type: integer
+        targetStandardId:
+          type: integer
+        targetControlId:
+          type: integer
+        mappingDescription:
+          type: string
+
+    Organization:
+      type: object
+      properties:
+        organizationId:
+          type: integer
+          example: 401
+        name:
+          type: string
+          example: "Acme Corp"
+        industry:
+          type: string
+          example: "Technology"
+        region:
+          type: string
+          example: "North America"
+        complianceScore:
+          type: number
+          format: float
+          example: 78.5
+    OrganizationCreate:
+      allOf:
+        - $ref: "#/components/schemas/Organization"
+        - type: object
+          properties:
+            organizationId:
+              readOnly: true
+          required:
+            - name
+    OrganizationUpdate:
+      allOf:
+        - $ref: "#/components/schemas/OrganizationCreate"
+    OrganizationPatch:
+      type: object
+      properties:
+        name:
+          type: string
+        industry:
+          type: string
+        region:
+          type: string
+        complianceScore:
+          type: number
+          format: float
+
+    OrganizationStandard:
+      type: object
+      properties:
+        organizationId:
+          type: integer
+          example: 401
+        standardId:
+          type: integer
+          example: 101
+    OrganizationStandardCreate:
+      allOf:
+        - $ref: "#/components/schemas/OrganizationStandard"
+        - type: object
+          required:
+            - organizationId
+            - standardId
+
+    ControlRelevantStandard:
+      type: object
+      properties:
+        controlId:
+          type: integer
+          example: 201
+        standardId:
+          type: integer
+          example: 101
+    ControlRelevantStandardCreate:
+      allOf:
+        - $ref: "#/components/schemas/ControlRelevantStandard"
+        - type: object
+          required:
+            - controlId
+            - standardId
+
+    ComplianceTracking:
+      type: object
+      properties:
+        trackingId:
+          type: integer
+          example: 501
+        organizationId:
+          type: integer
+          example: 401
+        standardId:
+          type: integer
+          example: 101
+        controlId:
+          type: integer
+          example: 201
+        complianceStatus:
+          type: string
+          example: "Compliant"
+        auditDate:
+          type: string
+          format: date
+          example: "2025-01-15"
+        evidenceUrl:
+          type: string
+          example: "https://example.com/audit-evidence.pdf"
+        riskImpact:
+          type: string
+          example: "High"
+    ComplianceTrackingCreate:
+      allOf:
+        - $ref: "#/components/schemas/ComplianceTracking"
+        - type: object
+          properties:
+            trackingId:
+              readOnly: true
+          required:
+            - organizationId
+            - standardId
+            - controlId
+            - complianceStatus
+    ComplianceTrackingUpdate:
+      allOf:
+        - $ref: "#/components/schemas/ComplianceTrackingCreate"
+    ComplianceTrackingPatch:
+      type: object
+      properties:
+        organizationId:
+          type: integer
+        standardId:
+          type: integer
+        controlId:
+          type: integer
+        complianceStatus:
+          type: string
+        auditDate:
+          type: string
+          format: date
+        evidenceUrl:
+          type: string
+        riskImpact:
+          type: string
+
+    TrainingResource:
+      type: object
+      properties:
+        resourceId:
+          type: integer
+          example: 601
+        name:
+          type: string
+          example: "Cybersecurity Awareness Training"
+        standardId:
+          type: integer
+          example: 101
+        description:
+          type: string
+          example: "Online course covering basic cybersecurity hygiene"
+        provider:
+          type: string
+          example: "Coursera"
+        type:
+          type: string
+          example: "Online Course"
+        url:
+          type: string
+          example: "https://example.com/training-resource"
+    TrainingResourceCreate:
+      allOf:
+        - $ref: "#/components/schemas/TrainingResource"
+        - type: object
+          properties:
+            resourceId:
+              readOnly: true
+          required:
+            - name
+            - standardId
+    TrainingResourceUpdate:
+      allOf:
+        - $ref: "#/components/schemas/TrainingResourceCreate"
+    TrainingResourcePatch:
+      type: object
+      properties:
+        name:
+          type: string
+        standardId:
+          type: integer
+        description:
+          type: string
+        provider:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+
+  # ---------------------------------------------------------------------------
+  # Common/Reusable Responses
+  # ---------------------------------------------------------------------------
+  responses:
+    StandardListResponse:
+      description: A list of standards
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Standard"
+    StandardResponse:
+      description: A single standard object
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Standard"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Resource not found"
+    BadRequest:
+      description: Bad request (validation error, etc.)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid request parameters"
+              details:
+                type: array
+                items:
+                  type: string
