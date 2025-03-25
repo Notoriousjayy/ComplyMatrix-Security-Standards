@@ -21,7 +21,7 @@ public class OrganizationsService {
         return repository.findAll();
     }
 
-    public Optional<Organizations> findById(Integer id) {
+    public Optional<Organizations> findById(Long id) {
         return repository.findById(id);
     }
 
@@ -29,10 +29,10 @@ public class OrganizationsService {
         return repository.save(org);
     }
 
-    public Organizations update(Integer id, Organizations updated) {
+    public Organizations update(Long id, Organizations updated) {
         return repository.findById(id)
                 .map(existing -> {
-                    Integer existingId = existing.getOrganizationId();
+                    Long existingId = existing.getOrganizationId();
                     BeanUtils.copyProperties(updated, existing, "organizationId");
                     existing.setOrganizationId(existingId);
                     return repository.save(existing);
@@ -40,7 +40,7 @@ public class OrganizationsService {
                 .orElseThrow(() -> new RuntimeException("Organization not found with ID: " + id));
     }
 
-    public Organizations patch(Integer id, Organizations partial) {
+    public Organizations patch(Long id, Organizations partial) {
         return repository.findById(id)
                 .map(existing -> {
                     if (partial.getName() != null) {
@@ -60,7 +60,7 @@ public class OrganizationsService {
                 .orElseThrow(() -> new RuntimeException("Organization not found with ID: " + id));
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("Organization not found with ID: " + id);
         }

@@ -21,7 +21,7 @@ public class ComplianceTrackingService {
         return repository.findAll();
     }
 
-    public Optional<ComplianceTracking> findById(Integer id) {
+    public Optional<ComplianceTracking> findById(Long id) {
         return repository.findById(id);
     }
 
@@ -29,10 +29,10 @@ public class ComplianceTrackingService {
         return repository.save(ct);
     }
 
-    public ComplianceTracking update(Integer id, ComplianceTracking updated) {
+    public ComplianceTracking update(Long id, ComplianceTracking updated) {
         return repository.findById(id)
                 .map(existing -> {
-                    Integer existingId = existing.getTrackingId();
+                    Long existingId = existing.getTrackingId();
                     BeanUtils.copyProperties(updated, existing, "trackingId");
                     existing.setTrackingId(existingId);
                     return repository.save(existing);
@@ -40,17 +40,17 @@ public class ComplianceTrackingService {
                 .orElseThrow(() -> new RuntimeException("ComplianceTracking not found with ID: " + id));
     }
 
-    public ComplianceTracking patch(Integer id, ComplianceTracking partial) {
+    public ComplianceTracking patch(Long id, ComplianceTracking partial) {
         return repository.findById(id)
                 .map(existing -> {
-                    if (partial.getOrganizationId() != null) {
-                        existing.setOrganizationId(partial.getOrganizationId());
+                    if (partial.getOrganization() != null) {
+                        existing.setOrganization(partial.getOrganization());
                     }
-                    if (partial.getStandardId() != null) {
-                        existing.setStandardId(partial.getStandardId());
+                    if (partial.getStandard() != null) {
+                        existing.setStandard(partial.getStandard());
                     }
-                    if (partial.getControlId() != null) {
-                        existing.setControlId(partial.getControlId());
+                    if (partial.getControl() != null) {
+                        existing.setControl(partial.getControl());
                     }
                     if (partial.getComplianceStatus() != null) {
                         existing.setComplianceStatus(partial.getComplianceStatus());
@@ -69,7 +69,7 @@ public class ComplianceTrackingService {
                 .orElseThrow(() -> new RuntimeException("ComplianceTracking not found with ID: " + id));
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("ComplianceTracking not found with ID: " + id);
         }

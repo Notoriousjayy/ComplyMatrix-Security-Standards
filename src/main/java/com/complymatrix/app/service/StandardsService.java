@@ -23,21 +23,18 @@ public class StandardsService {
         return standardsRepository.findAll();
     }
 
-    public Optional<Standards> findById(Integer id) {
+    public Optional<Standards> findById(Long id) {
         return standardsRepository.findById(id);
     }
 
     public Standards createStandard(Standards standard) {
-        // ID is auto-generated (assuming sequence or identity). Just save:
         return standardsRepository.save(standard);
     }
 
-    public Standards updateStandard(Integer id, Standards updated) {
-        // Full update (PUT) - replace all fields
+    public Standards updateStandard(Long id, Standards updated) {
         return standardsRepository.findById(id)
                 .map(existing -> {
-                    // Preserve the ID to avoid overwriting it
-                    Integer existingId = existing.getStandardId();
+                    Long existingId = existing.getStandardId();
                     BeanUtils.copyProperties(updated, existing, "standardId");
                     existing.setStandardId(existingId);
                     return standardsRepository.save(existing);
@@ -45,8 +42,7 @@ public class StandardsService {
                 .orElseThrow(() -> new RuntimeException("Standard not found with ID: " + id));
     }
 
-    public Standards patchStandard(Integer id, Standards partial) {
-        // Partial update (PATCH)
+    public Standards patchStandard(Long id, Standards partial) {
         return standardsRepository.findById(id)
                 .map(existing -> {
                     if (partial.getName() != null) {
@@ -81,7 +77,7 @@ public class StandardsService {
                 .orElseThrow(() -> new RuntimeException("Standard not found with ID: " + id));
     }
 
-    public void deleteStandard(Integer id) {
+    public void deleteStandard(Long id) {
         if (!standardsRepository.existsById(id)) {
             throw new RuntimeException("Standard not found with ID: " + id);
         }

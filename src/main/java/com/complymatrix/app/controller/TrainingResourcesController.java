@@ -33,14 +33,14 @@ public class TrainingResourcesController {
     }
 
     @GetMapping("/{resourceId}")
-    public ResponseEntity<TrainingResources> getOne(@PathVariable Integer resourceId) {
+    public ResponseEntity<TrainingResources> getOne(@PathVariable Long resourceId) {
         return service.findById(resourceId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{resourceId}")
-    public ResponseEntity<TrainingResources> update(@PathVariable Integer resourceId,
+    public ResponseEntity<TrainingResources> update(@PathVariable Long resourceId,
                                                     @RequestBody TrainingResources tr) {
         try {
             TrainingResources updated = service.update(resourceId, tr);
@@ -51,7 +51,7 @@ public class TrainingResourcesController {
     }
 
     @PatchMapping("/{resourceId}")
-    public ResponseEntity<TrainingResources> patch(@PathVariable Integer resourceId,
+    public ResponseEntity<TrainingResources> patch(@PathVariable Long resourceId,
                                                    @RequestBody TrainingResources partial) {
         try {
             TrainingResources updated = service.patch(resourceId, partial);
@@ -62,7 +62,7 @@ public class TrainingResourcesController {
     }
 
     @DeleteMapping("/{resourceId}")
-    public ResponseEntity<Void> delete(@PathVariable Integer resourceId) {
+    public ResponseEntity<Void> delete(@PathVariable Long resourceId) {
         try {
             service.delete(resourceId);
             return ResponseEntity.noContent().build();

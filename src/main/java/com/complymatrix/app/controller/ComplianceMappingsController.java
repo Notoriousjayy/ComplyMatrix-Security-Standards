@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller for /api/v1/compliance-mappings
- */
 @RestController
 @RequestMapping("/api/v1/compliance-mappings")
 public class ComplianceMappingsController {
@@ -29,18 +26,18 @@ public class ComplianceMappingsController {
     @PostMapping
     public ResponseEntity<ComplianceMappings> create(@RequestBody ComplianceMappings cm) {
         ComplianceMappings created = service.create(cm);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{mappingId}")
-    public ResponseEntity<ComplianceMappings> getOne(@PathVariable Integer mappingId) {
+    public ResponseEntity<ComplianceMappings> getOne(@PathVariable Long mappingId) {
         return service.findById(mappingId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{mappingId}")
-    public ResponseEntity<ComplianceMappings> update(@PathVariable Integer mappingId,
+    public ResponseEntity<ComplianceMappings> update(@PathVariable Long mappingId,
                                                      @RequestBody ComplianceMappings cm) {
         try {
             ComplianceMappings updated = service.update(mappingId, cm);
@@ -51,7 +48,7 @@ public class ComplianceMappingsController {
     }
 
     @PatchMapping("/{mappingId}")
-    public ResponseEntity<ComplianceMappings> patch(@PathVariable Integer mappingId,
+    public ResponseEntity<ComplianceMappings> patch(@PathVariable Long mappingId,
                                                     @RequestBody ComplianceMappings partial) {
         try {
             ComplianceMappings updated = service.patch(mappingId, partial);
@@ -62,7 +59,7 @@ public class ComplianceMappingsController {
     }
 
     @DeleteMapping("/{mappingId}")
-    public ResponseEntity<Void> delete(@PathVariable Integer mappingId) {
+    public ResponseEntity<Void> delete(@PathVariable Long mappingId) {
         try {
             service.delete(mappingId);
             return ResponseEntity.noContent().build();

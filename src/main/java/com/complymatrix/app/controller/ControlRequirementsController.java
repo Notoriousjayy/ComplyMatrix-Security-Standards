@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller for /api/v1/control-requirements
- */
 @RestController
 @RequestMapping("/api/v1/control-requirements")
 public class ControlRequirementsController {
@@ -33,14 +30,14 @@ public class ControlRequirementsController {
     }
 
     @GetMapping("/{controlId}")
-    public ResponseEntity<ControlRequirements> getOne(@PathVariable Integer controlId) {
+    public ResponseEntity<ControlRequirements> getOne(@PathVariable Long controlId) {
         return service.findById(controlId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{controlId}")
-    public ResponseEntity<ControlRequirements> update(@PathVariable Integer controlId,
+    public ResponseEntity<ControlRequirements> update(@PathVariable Long controlId,
                                                       @RequestBody ControlRequirements cr) {
         try {
             ControlRequirements updated = service.update(controlId, cr);
@@ -51,7 +48,7 @@ public class ControlRequirementsController {
     }
 
     @PatchMapping("/{controlId}")
-    public ResponseEntity<ControlRequirements> patch(@PathVariable Integer controlId,
+    public ResponseEntity<ControlRequirements> patch(@PathVariable Long controlId,
                                                      @RequestBody ControlRequirements partial) {
         try {
             ControlRequirements updated = service.patch(controlId, partial);
@@ -62,7 +59,7 @@ public class ControlRequirementsController {
     }
 
     @DeleteMapping("/{controlId}")
-    public ResponseEntity<Void> delete(@PathVariable Integer controlId) {
+    public ResponseEntity<Void> delete(@PathVariable Long controlId) {
         try {
             service.delete(controlId);
             return ResponseEntity.noContent().build();

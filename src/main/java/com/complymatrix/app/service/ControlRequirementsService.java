@@ -23,7 +23,7 @@ public class ControlRequirementsService {
         return controlRequirementsRepository.findAll();
     }
 
-    public Optional<ControlRequirements> findById(Integer id) {
+    public Optional<ControlRequirements> findById(Long id) {
         return controlRequirementsRepository.findById(id);
     }
 
@@ -31,10 +31,10 @@ public class ControlRequirementsService {
         return controlRequirementsRepository.save(cr);
     }
 
-    public ControlRequirements update(Integer id, ControlRequirements updated) {
+    public ControlRequirements update(Long id, ControlRequirements updated) {
         return controlRequirementsRepository.findById(id)
                 .map(existing -> {
-                    Integer existingId = existing.getControlId();
+                    Long existingId = existing.getControlId();
                     BeanUtils.copyProperties(updated, existing, "controlId");
                     existing.setControlId(existingId);
                     return controlRequirementsRepository.save(existing);
@@ -42,11 +42,11 @@ public class ControlRequirementsService {
                 .orElseThrow(() -> new RuntimeException("ControlRequirement not found with ID: " + id));
     }
 
-    public ControlRequirements patch(Integer id, ControlRequirements partial) {
+    public ControlRequirements patch(Long id, ControlRequirements partial) {
         return controlRequirementsRepository.findById(id)
                 .map(existing -> {
-                    if (partial.getStandardId() != null) {
-                        existing.setStandardId(partial.getStandardId());
+                    if (partial.getStandard() != null) {
+                        existing.setStandard(partial.getStandard());
                     }
                     if (partial.getName() != null) {
                         existing.setName(partial.getName());
@@ -74,7 +74,7 @@ public class ControlRequirementsService {
                 .orElseThrow(() -> new RuntimeException("ControlRequirement not found with ID: " + id));
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (!controlRequirementsRepository.existsById(id)) {
             throw new RuntimeException("ControlRequirement not found with ID: " + id);
         }

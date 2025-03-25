@@ -21,16 +21,21 @@ public class OrganizationStandardsService {
         return repository.findAll();
     }
 
-    public Optional<OrganizationStandards> findById(Integer organizationId, Integer standardId) {
-        return repository.findById(new OrganizationStandardsId(organizationId, standardId));
+    public Optional<OrganizationStandards> findById(Long organizationId, Long standardId) {
+        OrganizationStandardsId id = new OrganizationStandardsId();
+        id.setOrganizationId(organizationId);
+        id.setStandardId(standardId);
+        return repository.findById(id);
     }
 
     public OrganizationStandards create(OrganizationStandards link) {
         return repository.save(link);
     }
 
-    public void delete(Integer organizationId, Integer standardId) {
-        OrganizationStandardsId id = new OrganizationStandardsId(organizationId, standardId);
+    public void delete(Long organizationId, Long standardId) {
+        OrganizationStandardsId id = new OrganizationStandardsId();
+        id.setOrganizationId(organizationId);
+        id.setStandardId(standardId);
         if (!repository.existsById(id)) {
             throw new RuntimeException("Link not found: org=" + organizationId + ", std=" + standardId);
         }

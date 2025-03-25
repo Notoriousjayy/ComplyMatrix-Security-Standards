@@ -21,16 +21,22 @@ public class ControlRelevantStandardsService {
         return repository.findAll();
     }
 
-    public Optional<ControlRelevantStandards> findById(Integer controlId, Integer standardId) {
-        return repository.findById(new ControlRelevantStandardsId(controlId, standardId));
+    public Optional<ControlRelevantStandards> findById(Long controlId, Long standardId) {
+        // Create composite key using the no-arg constructor and setters.
+        ControlRelevantStandardsId id = new ControlRelevantStandardsId();
+        id.setControlId(controlId);
+        id.setStandardId(standardId);
+        return repository.findById(id);
     }
 
     public ControlRelevantStandards create(ControlRelevantStandards link) {
         return repository.save(link);
     }
 
-    public void delete(Integer controlId, Integer standardId) {
-        ControlRelevantStandardsId id = new ControlRelevantStandardsId(controlId, standardId);
+    public void delete(Long controlId, Long standardId) {
+        ControlRelevantStandardsId id = new ControlRelevantStandardsId();
+        id.setControlId(controlId);
+        id.setStandardId(standardId);
         if (!repository.existsById(id)) {
             throw new RuntimeException("Link not found: control=" + controlId + ", std=" + standardId);
         }

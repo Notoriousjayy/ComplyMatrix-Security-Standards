@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller for /api/v1/control-relevant-standards
- */
 @RestController
 @RequestMapping("/api/v1/control-relevant-standards")
 public class ControlRelevantStandardsController {
@@ -32,16 +29,16 @@ public class ControlRelevantStandardsController {
     }
 
     @GetMapping("/{controlId}/{standardId}")
-    public ResponseEntity<ControlRelevantStandards> getOne(@PathVariable Integer controlId,
-                                                           @PathVariable Integer standardId) {
+    public ResponseEntity<ControlRelevantStandards> getOne(@PathVariable Long controlId,
+                                                           @PathVariable Long standardId) {
         return service.findById(controlId, standardId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{controlId}/{standardId}")
-    public ResponseEntity<Void> delete(@PathVariable Integer controlId,
-                                       @PathVariable Integer standardId) {
+    public ResponseEntity<Void> delete(@PathVariable Long controlId,
+                                       @PathVariable Long standardId) {
         try {
             service.delete(controlId, standardId);
             return ResponseEntity.noContent().build();

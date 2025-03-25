@@ -21,7 +21,7 @@ public class TrainingResourcesService {
         return repository.findAll();
     }
 
-    public Optional<TrainingResources> findById(Integer id) {
+    public Optional<TrainingResources> findById(Long id) {
         return repository.findById(id);
     }
 
@@ -29,10 +29,10 @@ public class TrainingResourcesService {
         return repository.save(tr);
     }
 
-    public TrainingResources update(Integer id, TrainingResources updated) {
+    public TrainingResources update(Long id, TrainingResources updated) {
         return repository.findById(id)
                 .map(existing -> {
-                    Integer existingId = existing.getResourceId();
+                    Long existingId = existing.getResourceId();
                     BeanUtils.copyProperties(updated, existing, "resourceId");
                     existing.setResourceId(existingId);
                     return repository.save(existing);
@@ -40,14 +40,14 @@ public class TrainingResourcesService {
                 .orElseThrow(() -> new RuntimeException("TrainingResource not found with ID: " + id));
     }
 
-    public TrainingResources patch(Integer id, TrainingResources partial) {
+    public TrainingResources patch(Long id, TrainingResources partial) {
         return repository.findById(id)
                 .map(existing -> {
                     if (partial.getName() != null) {
                         existing.setName(partial.getName());
                     }
-                    if (partial.getStandardId() != null) {
-                        existing.setStandardId(partial.getStandardId());
+                    if (partial.getStandard() != null) {
+                        existing.setStandard(partial.getStandard());
                     }
                     if (partial.getDescription() != null) {
                         existing.setDescription(partial.getDescription());
@@ -66,7 +66,7 @@ public class TrainingResourcesService {
                 .orElseThrow(() -> new RuntimeException("TrainingResource not found with ID: " + id));
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("TrainingResource not found with ID: " + id);
         }

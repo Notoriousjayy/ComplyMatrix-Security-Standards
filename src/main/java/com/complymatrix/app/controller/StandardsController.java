@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller for /api/v1/standards
- */
 @RestController
 @RequestMapping("/api/v1/standards")
 public class StandardsController {
@@ -33,14 +30,14 @@ public class StandardsController {
     }
 
     @GetMapping("/{standardId}")
-    public ResponseEntity<Standards> getStandard(@PathVariable Integer standardId) {
+    public ResponseEntity<Standards> getStandard(@PathVariable Long standardId) {
         return standardsService.findById(standardId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{standardId}")
-    public ResponseEntity<Standards> updateStandard(@PathVariable Integer standardId,
+    public ResponseEntity<Standards> updateStandard(@PathVariable Long standardId,
                                                     @RequestBody Standards standard) {
         try {
             Standards updated = standardsService.updateStandard(standardId, standard);
@@ -51,7 +48,7 @@ public class StandardsController {
     }
 
     @PatchMapping("/{standardId}")
-    public ResponseEntity<Standards> patchStandard(@PathVariable Integer standardId,
+    public ResponseEntity<Standards> patchStandard(@PathVariable Long standardId,
                                                    @RequestBody Standards partial) {
         try {
             Standards updated = standardsService.patchStandard(standardId, partial);
@@ -62,7 +59,7 @@ public class StandardsController {
     }
 
     @DeleteMapping("/{standardId}")
-    public ResponseEntity<Void> deleteStandard(@PathVariable Integer standardId) {
+    public ResponseEntity<Void> deleteStandard(@PathVariable Long standardId) {
         try {
             standardsService.deleteStandard(standardId);
             return ResponseEntity.noContent().build();

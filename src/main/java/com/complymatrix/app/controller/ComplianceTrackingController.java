@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller for /api/v1/compliance-tracking
- */
 @RestController
 @RequestMapping("/api/v1/compliance-tracking")
 public class ComplianceTrackingController {
@@ -29,18 +26,18 @@ public class ComplianceTrackingController {
     @PostMapping
     public ResponseEntity<ComplianceTracking> create(@RequestBody ComplianceTracking ct) {
         ComplianceTracking created = service.create(ct);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{trackingId}")
-    public ResponseEntity<ComplianceTracking> getOne(@PathVariable Integer trackingId) {
+    public ResponseEntity<ComplianceTracking> getOne(@PathVariable Long trackingId) {
         return service.findById(trackingId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{trackingId}")
-    public ResponseEntity<ComplianceTracking> update(@PathVariable Integer trackingId,
+    public ResponseEntity<ComplianceTracking> update(@PathVariable Long trackingId,
                                                      @RequestBody ComplianceTracking ct) {
         try {
             ComplianceTracking updated = service.update(trackingId, ct);
@@ -51,7 +48,7 @@ public class ComplianceTrackingController {
     }
 
     @PatchMapping("/{trackingId}")
-    public ResponseEntity<ComplianceTracking> patch(@PathVariable Integer trackingId,
+    public ResponseEntity<ComplianceTracking> patch(@PathVariable Long trackingId,
                                                     @RequestBody ComplianceTracking partial) {
         try {
             ComplianceTracking updated = service.patch(trackingId, partial);
@@ -62,7 +59,7 @@ public class ComplianceTrackingController {
     }
 
     @DeleteMapping("/{trackingId}")
-    public ResponseEntity<Void> delete(@PathVariable Integer trackingId) {
+    public ResponseEntity<Void> delete(@PathVariable Long trackingId) {
         try {
             service.delete(trackingId);
             return ResponseEntity.noContent().build();

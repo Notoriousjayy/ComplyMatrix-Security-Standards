@@ -21,7 +21,7 @@ public class ComplianceMappingsService {
         return repository.findAll();
     }
 
-    public Optional<ComplianceMappings> findById(Integer id) {
+    public Optional<ComplianceMappings> findById(Long id) {
         return repository.findById(id);
     }
 
@@ -29,10 +29,10 @@ public class ComplianceMappingsService {
         return repository.save(cm);
     }
 
-    public ComplianceMappings update(Integer id, ComplianceMappings updated) {
+    public ComplianceMappings update(Long id, ComplianceMappings updated) {
         return repository.findById(id)
                 .map(existing -> {
-                    Integer existingId = existing.getMappingId();
+                    Long existingId = existing.getMappingId();
                     BeanUtils.copyProperties(updated, existing, "mappingId");
                     existing.setMappingId(existingId);
                     return repository.save(existing);
@@ -40,20 +40,20 @@ public class ComplianceMappingsService {
                 .orElseThrow(() -> new RuntimeException("ComplianceMapping not found with ID: " + id));
     }
 
-    public ComplianceMappings patch(Integer id, ComplianceMappings partial) {
+    public ComplianceMappings patch(Long id, ComplianceMappings partial) {
         return repository.findById(id)
                 .map(existing -> {
-                    if (partial.getSourceStandardId() != null) {
-                        existing.setSourceStandardId(partial.getSourceStandardId());
+                    if (partial.getSourceStandard() != null) {
+                        existing.setSourceStandard(partial.getSourceStandard());
                     }
-                    if (partial.getSourceControlId() != null) {
-                        existing.setSourceControlId(partial.getSourceControlId());
+                    if (partial.getSourceControl() != null) {
+                        existing.setSourceControl(partial.getSourceControl());
                     }
-                    if (partial.getTargetStandardId() != null) {
-                        existing.setTargetStandardId(partial.getTargetStandardId());
+                    if (partial.getTargetStandard() != null) {
+                        existing.setTargetStandard(partial.getTargetStandard());
                     }
-                    if (partial.getTargetControlId() != null) {
-                        existing.setTargetControlId(partial.getTargetControlId());
+                    if (partial.getTargetControl() != null) {
+                        existing.setTargetControl(partial.getTargetControl());
                     }
                     if (partial.getMappingDescription() != null) {
                         existing.setMappingDescription(partial.getMappingDescription());
@@ -63,7 +63,7 @@ public class ComplianceMappingsService {
                 .orElseThrow(() -> new RuntimeException("ComplianceMapping not found with ID: " + id));
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("ComplianceMapping not found with ID: " + id);
         }

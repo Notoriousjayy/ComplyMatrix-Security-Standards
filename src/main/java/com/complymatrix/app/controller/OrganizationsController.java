@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller for /api/v1/organizations
- */
 @RestController
 @RequestMapping("/api/v1/organizations")
 public class OrganizationsController {
@@ -29,18 +26,18 @@ public class OrganizationsController {
     @PostMapping
     public ResponseEntity<Organizations> create(@RequestBody Organizations org) {
         Organizations created = service.create(org);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{organizationId}")
-    public ResponseEntity<Organizations> getOne(@PathVariable Integer organizationId) {
+    public ResponseEntity<Organizations> getOne(@PathVariable Long organizationId) {
         return service.findById(organizationId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{organizationId}")
-    public ResponseEntity<Organizations> update(@PathVariable Integer organizationId,
+    public ResponseEntity<Organizations> update(@PathVariable Long organizationId,
                                                 @RequestBody Organizations org) {
         try {
             Organizations updated = service.update(organizationId, org);
@@ -51,7 +48,7 @@ public class OrganizationsController {
     }
 
     @PatchMapping("/{organizationId}")
-    public ResponseEntity<Organizations> patch(@PathVariable Integer organizationId,
+    public ResponseEntity<Organizations> patch(@PathVariable Long organizationId,
                                                @RequestBody Organizations partial) {
         try {
             Organizations updated = service.patch(organizationId, partial);
@@ -62,7 +59,7 @@ public class OrganizationsController {
     }
 
     @DeleteMapping("/{organizationId}")
-    public ResponseEntity<Void> delete(@PathVariable Integer organizationId) {
+    public ResponseEntity<Void> delete(@PathVariable Long organizationId) {
         try {
             service.delete(organizationId);
             return ResponseEntity.noContent().build();

@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller for /api/v1/organization-standards
- */
 @RestController
 @RequestMapping("/api/v1/organization-standards")
 public class OrganizationStandardsController {
@@ -32,20 +29,20 @@ public class OrganizationStandardsController {
     }
 
     @GetMapping("/{organizationId}/{standardId}")
-    public ResponseEntity<OrganizationStandards> getOne(@PathVariable Integer organizationId,
-                                                        @PathVariable Integer standardId) {
+    public ResponseEntity<OrganizationStandards> getOne(@PathVariable Long organizationId,
+                                                        @PathVariable Long standardId) {
         return service.findById(organizationId, standardId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{organizationId}/{standardId}")
-    public ResponseEntity<Void> delete(@PathVariable Integer organizationId,
-                                       @PathVariable Integer standardId) {
+    public ResponseEntity<Void> delete(@PathVariable Long organizationId,
+                                       @PathVariable Long standardId) {
         try {
             service.delete(organizationId, standardId);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ex) {
             return ResponseEntity.notFound().build();
         }
     }
